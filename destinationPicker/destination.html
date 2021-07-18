@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <!-- Use this CSS stylesheet to ensure that add-ons styling
+     matches the default Google Docs styles -->
+    <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+        rel="stylesheet">
+  
+    <style>
+    .button-red {
+      background: -moz-linear-gradient(top, #dd4b39, #d14836);
+      background: -ms-linear-gradient(top, #dd4b39, #d14836);
+      background: -o-linear-gradient(top, #dd4b39, #d14836);
+      background: -webkit-linear-gradient(top, #dd4b39, #d14836);
+      background: linear-gradient(top, #dd4b39, #d14836);
+      border: 1px solid transparent;
+      color: #fff;
+      text-shadow: 0 1px rgba(0, 0, 0, .1);
+    }
+
+    .button-blue {
+      background: -moz-linear-gradient(top, #4d90fe, #4787ed);
+      background: -ms-linear-gradient(top, #4d90fe, #4787ed);
+      background: -o-linear-gradient(top, #4d90fe, #4787ed);
+      background: -webkit-linear-gradient(top, #4d90fe, #4787ed);
+      background: linear-gradient(top, #4d90fe, #4787ed);
+      border: 1px solid #3079ed;
+      color: #fff;
+    } /* Blue */
+    
+    .button-green {
+      background: -moz-linear-gradient(top, #3d9400, #398a00);
+      background: -ms-linear-gradient(top, #3d9400, #398a00);
+      background: -o-linear-gradient(top, #3d9400, #398a00);
+      background: -webkit-linear-gradient(top, #3d9400, #398a00);
+      background: linear-gradient(top, #3d9400, #398a00);
+      border: 1px solid #29691d;
+      color: #fff;
+    } /* Green */
+
+    .button-gray {
+      background: -moz-linear-gradient(top, #f5f5f5, #f1f1f1);
+      background: -ms-linear-gradient(top, #f5f5f5, #f1f1f1);
+      background: -o-linear-gradient(top, #f5f5f5, #f1f1f1);
+      background: -webkit-linear-gradient(top, #f5f5f5, #f1f1f1);
+      background: linear-gradient(top, #f5f5f5, #f1f1f1);
+      border: 1px solid #dcdcdc;
+      color: #fff;
+    } /* Green */
+    </style>
+  </head>
+  
+  <body onload="refreshOptions()">
+  
+    <!-- The sidebar will have a input box and the search button -->
+    <div class="sidebar">
+
+        <!-- The search box for Google Maps -->
+        <div id="add-entry-div" class="block form-group">
+            <input type="text" id="destination-input" placeholder="Eg. Tokyo"/>
+            <button class="button-blue" id="add-entry">Add</button>
+        </div>
+
+        <div id="remove-entry-div" class="block form-group">
+            <select id="remove-select" name="remove-select"></select>
+            <button class="button-red" id="remove-entry">Remove</button>
+        </div>
+
+        <div id="vote-div" class="block form-group">
+            <input type="text" id="name-input" placeholder="Your name here..."/>
+            <select id="vote-select" name="remove-select"></select>
+            <button class="button-green" id="vote-entry">Vote</button>
+        </div>
+
+        <div id="vote-div" class="block form-group">
+            <button class="button-green" id="refresh-btn">Refresh</button>
+        </div>
+    </div>
+
+    <!-- Load the jQuery library from the Google CDN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+    </script>
+
+    <script>
+    // Attach click handlers after the Sidebar has loaded in Google Docs
+    $(function() {
+      // for add
+      $('#add-entry').click(function() {
+        google.script.run
+          .withSuccessHandler(function() {
+            refreshOptions();
+          })
+          .addEntry($('#destination-input').val());
+      });
+
+      $('#remove-entry').click(function() {
+        console.log($("#remove-select :selected").text());
+        console.log("frenchFries")
+
+        google.script.run
+          .withSuccessHandler(function() {
+            refreshOptions();
+          })
+          .removeEntry($("#remove-select :selected").text());
+      });
+
+      $('#vote-entry').click(function() {
+        google.script.run
+          .withSuccessHandler(function() {
+            refreshOptions();
+          })
+          .voteEntry($("#vote-select :selected").text(), $('#name-input').val());
+      });
+
+      $('#refresh-btn').click(function() {
+        refreshOptions();
+      });
+
+      // If the user presses the Enter key in the search box, perform a search
+      $('#destination-input').keyup(function(e) {
+          if (e.keyCode === 13) {
+            $('#add-entry').click();
+            google.script.run.addEntry($('#destination-input').val());
+          }
+      });
+
+      $('#name-input').keyup(function(e) {
+          if (e.keyCode === 13) {
+            $('#vote-entry').click();
+            google.script.run.addEntry($('#name-input').val());
+          }
+      });
+
+
+    });
+    
+
+    function refreshOptions() {
+      var newCountriesList = [];
+
+      // fetch the options for the vote and remove buttons
+      google.script.run
+          .withSuccessHandler(
+            function(returnedCountriesList) {
+              newCountriesList = returnedCountriesList;
+              console.log(newCountriesList);
+
+              var countriesListLen = newCountriesList.length;
+
+              // remove all the items from the current list
+              var select_remove = document.getElementById("remove-select");
+
+              var i, L = select_remove.options.length - 1;
+              for(i = L; i >= 0; i--) {
+                  select_remove.remove(i);
+              }
+
+              var select_vote = document.getElementById('vote-select');
+
+              var i, L = select_vote.options.length - 1;
+              for(i = L; i >= 0; i--) {
+                  select_vote.remove(i);
+              }
+
+              // add the new list of options and indices
+              for(var i = 0; i < countriesListLen; i++) {
+                var opt1 = document.createElement("option");
+                opt1.value = i.toString();
+                opt1.text = newCountriesList[i].toString();
+                select_vote.add(opt1, null);
+              }
+
+              for(var i = 0; i < countriesListLen; i++) {
+                var opt1 = document.createElement("option");
+                opt1.value = i.toString();
+                opt1.text = newCountriesList[i].toString();
+                select_remove.add(opt1, null);
+              }
+
+              google.script.run.updateStylings();
+            })
+          .reutrnCountriesList();
+
+    }
+    </script>
+  </body>
+</html>
