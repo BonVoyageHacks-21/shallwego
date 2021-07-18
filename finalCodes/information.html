@@ -1,0 +1,192 @@
+<!-- Use this CSS stylesheet to ensure that add-ons styling
+     matches the default Google Docs styles -->
+     <link href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+     rel="stylesheet">
+<body style="background-color:#fafafa;">
+<!-- The sidebar will have a input box and the search button -->
+<div class="sidebar">
+
+   <!-- The search box for Google Maps -->
+   <div class="block form-group">
+       <h3>Local map</h3>
+       <input type="text" id="search" placeholder="Enter address.. " />
+       <button class="blue" id="load_maps">Search Google Maps</button>
+   </div>
+
+   <div class="block form-group">
+       <h3>Currency Converter</h3>
+       <p>Please enter input in lowercase</p>
+       <input type="text" id="con1" placeholder="From currency">
+       <input type="text" id="con2" placeholder="To currency">
+       <input type="text" id="value" placeholder="Amount">
+       <button class="blue" id="submit_curr">Get conversion</button>
+       <div id="result"></div>
+   </div>
+
+   <div class="block form-group">
+       <h3>Useful Information</h3>
+       <input type="text" id="country" size="25" placeholder="Enter a destination country">
+       <button class="blue" id="submit_country">Get country information</button>
+       <div id="countryinfo"></div>
+       <div id="weather"></div>
+       <button class="blue" id="infoToDoc">Paste info to document</button>
+   </div>
+
+   <div>
+     <h1> </h1>
+   </div>
+
+   <div>
+     <button class="blue" id="vidplayer">Video Player</button>
+     <button class="blue" id="formatter">Destination</button>
+   </div>
+
+</div>
+
+   <!-- Load the jQuery library from the Google CDN -->
+   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+   </script>
+
+   <script src="https://cdn.jsdelivr.net/gh/manuelmhtr/countries-and-timezones@latest/dist/index.js" type="text/javascript"></script>
+
+   <script>
+         let appendedString = "Get country information before pasting";
+         let appendedStringW = "Get country information before pasting";
+
+         function htmlDecode(value) {
+           return $('<div/>').html(value).text();
+         }
+
+       // Attach click handlers after the Sidebar has loaded in Google Docs
+       $(function() {
+
+           $('#vidplayer').click(function() {
+             google.script.run.showNext('vidplayer');
+           });
+
+           $('#formatter').click(function() {
+             google.script.run.showNext('destination');
+           });
+
+           // If the user presses the Enter key in the search box, perform a search
+           $('#search').keyup(function(e) {
+               if (e.keyCode === 13) {
+                   $('#load_maps').click();
+               }
+           });
+
+           // When a user clicks the thumbnail image in the sidebar, call
+           // insertGoogleMap to insert the maps image in the current document
+           $('#load_maps').click(function() {
+               google.script.run.insertGoogleMap($('#search').val());
+           });
+
+           $('#submit_curr').click(function() {
+               var curURL = 'https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/' + $('#con1').val() + '.json';
+               $.getJSON(curURL, function(data) {
+                   // JSON result in `data` variable
+                   var country1 = $('#con1').val();
+                   var country2 = $('#con2').val();
+                   const amount = $('#value').val();
+                   const money = data[country1][country2] * amount;
+                   console.log(money);
+
+                   $('#result').html('<p>' + country1.toUpperCase() + ' ' + amount + ' converts to ' + country2.toUpperCase() + ' ' + money + '</p>');
+               });
+
+           });
+
+           $('#submit_country').click(function() {
+               var countryName = $('#country').val();
+               var curURL = 'https://travelbriefing.org/' + countryName + '?format=json';
+
+               $.getJSON(curURL, function(data) {
+                   // JSON result in `data` variable
+                   const timezone = data['timezone']['name'];
+
+                   const langArr = data['language'];
+                   var langStr = "";
+                   for (let i = 0; i < langArr.length; i++) {
+                       const l = langArr[i]['language'];
+                       if (i === langArr.length - 1) {
+                           langStr += l;
+                       } else {
+                           langStr += l + ', ';
+                       }
+                   }
+
+                   const ele = data['electricity'];
+                   var eleStr = 'Voltage: ' + ele['voltage'] + ', Frequency: ' + ele['frequency'] + ', Plugs: ';
+                   console.log(eleStr);
+                   for (let i = 0; i < ele['plugs'].length; i++) {
+                       const e = ele['plugs'][i]
+                       if (i === ele['plugs'].length - 1) {
+                           eleStr += e;
+                       } else {
+                           eleStr += e + ', ';
+                       }
+                   }
+
+                   const tele = data['telephone'];
+                   var teleStr = 'Calling Code: ' + tele['calling_code'] + '<br>' + 'Police hotline: ' + tele['police'] +
+                       '<br>' + 'Ambulance hotline: ' + tele['ambulance'] + '<br>' + 'Fire department hotline: ' + tele['fire'];
+
+                   //"currency": { "name": "US Dollar", "code": "USD", "symbol": "$", "rate": "1"
+                   const currency = data['currency'];
+                   var currStr = 'Name: ' + currency['name'] + '<br>' + 'Code: ' + currency['code'] + '<br>' + 'Symbol: ' + currency['symbol'];
+
+                   const tz = ct.getTimezone(timezone)['utcOffsetStr'];
+                   const time = new Date();
+
+                   appendedString = '<p>' +
+                       'GMT Time now: ' + time.toUTCString() + '<br>' +
+                       'The timezone is ' + timezone + ', GMT' + tz + '<br>' +
+                       'Language spoken: ' + langStr + '<br>' +
+                       eleStr + '<br>' +
+                       teleStr + '<br>' +
+                       currStr + '<br>' +
+                       '</p>';
+
+                   $('#countryinfo').html(appendedString);
+
+               });
+
+               var wURL = 'https://goweather.herokuapp.com/weather/' + countryName;
+
+               $.getJSON(wURL, function(data1) {
+                   const temp = data1['temperature'];
+                   const desc = data1['description']
+                   const forecastArr = data1['forecast'];
+                   console.log(forecastArr);
+                   var tempStr = 'Temperature for today: ' + temp + '<br>' + 'Weather Description: ' + desc + '<br>' + 'Forecast: ';
+                   for (let i = 0; i < forecastArr.length; i++) {
+                       const t = forecastArr[i]['temperature'];
+                       if (i === forecastArr.length - 1) {
+                           tempStr += 'Day ' + (i + 1) + ': ' + t;
+                       } else {
+                           tempStr += 'Day ' + (i + 1) + ': ' + t + ', ';
+                       }
+                   }
+
+                   appendedStringW = '<p>' +
+                       tempStr + '<br>' +
+                       '</p>';
+
+                   $('#weather').html(appendedStringW);
+
+               });
+
+           });
+
+         
+
+           $('#infoToDoc').click(function() {
+               google.script.run.appendDestinationInformation(htmlDecode(appendedString
+               .replaceAll("<br>", "\n").replaceAll("<p>", "").replaceAll("</p>", "")));
+               google.script.run.appendDestinationInformation(appendedStringW
+               .replaceAll("<br>", "\n").replaceAll("<p>", "").replaceAll("</p>", ""));
+           });
+
+       });
+
+   </script>
