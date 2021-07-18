@@ -22,6 +22,6 @@ _Shall We Go_ has 3 key features - Local Information, Video Player and Formatter
    - No more accidental removal of information. 
 
 ## APIs used
-[currency api](https://github.com/fawazahmed0/currency-api)
-[travelbriefing api](https://travelbriefing.org/api)
-[weather api](https://github.com/robertoduessmann/weather-api)
+1. [currency api](https://github.com/fawazahmed0/currency-api)
+2. [travelbriefing api](https://travelbriefing.org/api)
+3. [weather api](https://github.com/robertoduessmann/weather-api)
