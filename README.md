@@ -20,3 +20,8 @@ _Shall We Go_ has 3 key features - Local Information, Video Player and Formatter
 3. Formatter
    - Let Formatter take care of formatting and styling your document.
    - No more accidental removal of information. 
+
+## APIs used
+[currency api](https://github.com/fawazahmed0/currency-api)
+[travelbriefing api](https://travelbriefing.org/api)
+[weather api](https://github.com/robertoduessmann/weather-api)
