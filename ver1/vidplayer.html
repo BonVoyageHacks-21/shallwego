@@ -7,51 +7,51 @@
 <!-- The sidebar will have a input box and the search button -->
 <div class="sidebar">
 
-  <!-- Youtube player -->
-  <div class="block form-group">
-    <h3>Video Player</h3>
-    <input type="text" id="yt" placeholder="Paste a Youtube link">
-    <button class="blue" id="submit_yt">Get Video</button>
-    <div id="player"></div>
-  </div>
+    <!-- Youtube player -->
+    <div class="block form-group">
+        <h3>Video Player</h3>
+        <input type="text" id="yt" placeholder="Paste a Youtube link">
+        <button class="blue" id="submit_yt">Get Video</button>
+        <div id="player"></div>
+    </div>
 
-  <div>
-    <h1> </h1>
-  </div>
+    <div>
+      <h1> </h1>
+    </div>
 
-  <div>
-    <button class="blue" id="information">Information</button>
-    <button class="blue" id="formatter">Formatter</button>
-  </div>
+    <div>
+        <button class="blue" id="information">Information</button>
+        <button class="blue" id="formatter">Formatter</button>
+    </div>
 </div>
 
-<!-- Load the jQuery library from the Google CDN -->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
-</script>
+    <!-- Load the jQuery library from the Google CDN -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+    </script>
 
-<script src="https://cdn.jsdelivr.net/gh/manuelmhtr/countries-and-timezones@latest/dist/index.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/gh/manuelmhtr/countries-and-timezones@latest/dist/index.js" type="text/javascript"></script>
 
-<script>
+    <script>
 
-  // Attach click handlers after the Sidebar has loaded in Google Docs
-  $(function() {
+        // Attach click handlers after the Sidebar has loaded in Google Docs
+        $(function() {
 
-    $('#information').click(function() {
-      google.script.run.showNext('information');
-    });
+            $('#information').click(function() {
+              google.script.run.showNext('information');
+            });
 
-    $('#formatter').click(function() {
-      google.script.run.showNext('formatter');
-    });
+            $('#formatter').click(function() {
+              google.script.run.showNext('formatter');
+            });
 
-    $('#submit_yt').click(function() {
-      var arr = ($('#yt').val()).split('=');
-      var ytURL = 'https://www.youtube.com/embed/' + arr[1];
+            $('#submit_yt').click(function() {
+                var arr = ($('#yt').val()).split('=');
+                var ytURL = 'https://www.youtube.com/embed/' + arr[1];
 
-      $('#player').html('<iframe width="270" height="315" src=' + ytURL + ' title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
-    });
+                $('#player').html('<iframe width="270" height="315" src=' + ytURL + ' title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+            });
 
 
-  });
+        });
 
-</script>
+    </script>
