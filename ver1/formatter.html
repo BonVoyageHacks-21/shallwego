@@ -1,0 +1,56 @@
+<!-- Use this CSS stylesheet to ensure that add-ons styling
+     matches the default Google Docs styles -->
+<link href="https://ssl.gstatic.com/docs/script/css/add-ons.css"
+      rel="stylesheet">
+<body style="background-color:#fafafa;">
+
+<!-- The sidebar will have a input box and the search button -->
+<div class="sidebar">
+
+  <!-- Youtube player -->
+  <div class="block form-group">
+    <input type="text" id="yt" placeholder="Enter a Youtube link">
+    <button class="blue" id="submit_yt">Get YouTube Video</button>
+    <div id="player"></div>
+  </div>
+
+  <div>
+    <h1> </h1>
+  </div>
+
+  <div>
+    <button class="blue" id="information">Information</button>
+    <button class="blue" id="vidplayer">Video Player</button>
+  </div>
+</div>
+
+<!-- Load the jQuery library from the Google CDN -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js">
+</script>
+
+<script src="https://cdn.jsdelivr.net/gh/manuelmhtr/countries-and-timezones@latest/dist/index.js" type="text/javascript"></script>
+
+<script>
+
+  // Attach click handlers after the Sidebar has loaded in Google Docs
+  $(function() {
+
+    $('#information').click(function() {
+      google.script.run.showNext('information');
+    });
+
+    $('#vidplayer').click(function() {
+      google.script.run.showNext('vidplayer');
+    });
+
+    $('#submit_yt').click(function() {
+      var arr = ($('#yt').val()).split('=');
+      var ytURL = 'https://www.youtube.com/embed/' + arr[1];
+
+      $('#player').html('<iframe width="270" height="315" src=' + ytURL + ' title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>');
+    });
+
+
+  });
+
+</script>
