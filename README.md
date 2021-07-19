@@ -1,6 +1,8 @@
 # shallwego
 ![](https://challengepost-s3-challengepost.netdna-ssl.com/photos/production/software_photos/001/603/288/datas/original.gif)
 
+Visit our [Devpost submission](https://devpost.com/software/shall-we-go)!
+
 
 ## What it does
 It is a Google Docs Add-On that helps you and your friends to plan your next trip together with ease.
